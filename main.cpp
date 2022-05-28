@@ -7,8 +7,7 @@ int main()
 {
     boost::asio::io_context context;
     Server server(context);
-    server.start();
-    std::cout << "yes" << std::endl;
+    std::cout << "Server started..\n" << std::endl;
     context.run();
     return 0;
 }

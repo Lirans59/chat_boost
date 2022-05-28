@@ -20,4 +20,9 @@ void Listener::start()
 void Listener::onAccpet(const boost::system::error_code& ec)
 {
     std::cout << "Accepted connection" << std::endl;
+    
+    // DO SOMETHING
+
+    _acceptor.async_accept(_socket, boost::bind(&Listener::onAccpet, this, 
+                            boost::asio::placeholders::error));
 }

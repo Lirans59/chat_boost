@@ -11,7 +11,6 @@ class Server
 public:
     Server(boost::asio::io_context& io_context);
     ~Server();
-    void start();
 
 private:
     void onAccept();
