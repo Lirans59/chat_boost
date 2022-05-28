@@ -16,11 +16,10 @@ private:
     Listener(boost::asio::io_context& io_context);
     ~Listener();
     void start();
-    void on_accpet(const boost::system::error_code& ec);
+    void onAccpet(const boost::system::error_code& ec);
     
     
 private:
-    boost::asio::io_context&        _io_context;
     boost::asio::ip::tcp::acceptor  _acceptor;
     boost::asio::ip::tcp::socket    _socket;
 };

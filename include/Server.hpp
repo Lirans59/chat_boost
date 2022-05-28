@@ -14,6 +14,9 @@ public:
     void start();
 
 private:
+    void onAccept();
+
+private:
     Listener _listener;
     //sessionManager sm; TO BE IMPLEMENTED
 };
