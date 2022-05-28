@@ -4,7 +4,11 @@
 #pragma once
 
 #include <iostream>
-#include "Listener.hpp"
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include "Session.hpp"
+
+#define PORT 8085
 
 class Server
 {
@@ -13,11 +17,15 @@ public:
     ~Server();
 
 private:
-    void onAccept();
+    void doAccept();
+    void onAccept(const boost::system::error_code& ec,
+                boost::shared_ptr<Session> session);
 
 private:
-    Listener _listener;
-    //sessionManager sm; TO BE IMPLEMENTED
+    boost::asio::io_context&        _io_contex;
+    boost::asio::ip::tcp::acceptor  _acceptor;
+    boost::asio::ip::tcp::socket    _socket;
+    std::vector< boost::shared_ptr<Session> >   _sessions;
 };
 
 #endif // SERVER_HPP
