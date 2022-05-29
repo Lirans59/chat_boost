@@ -6,6 +6,7 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include "Listener.hpp"
 #include "Session.hpp"
 
 #define PORT 8085
@@ -17,15 +18,11 @@ public:
     ~Server();
 
 private:
-    void doAccept();
-    void onAccept(const boost::system::error_code& ec,
-                boost::shared_ptr<Session> session);
 
 private:
-    boost::asio::io_context&        _io_contex;
-    boost::asio::ip::tcp::acceptor  _acceptor;
-    boost::asio::ip::tcp::socket    _socket;
-    std::vector< boost::shared_ptr<Session> >   _sessions;
+    boost::asio::io_context&    _io_contex;
+    Listener                    _listener;
+    SessionManager              _session_manager;
 };
 
 #endif // SERVER_HPP
