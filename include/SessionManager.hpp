@@ -19,7 +19,7 @@ public:
     SessionManager();
     ~SessionManager();
     void addSession(boost::shared_ptr<Session> session_ptr);
-    void removeSession(boost::shared_ptr<Session> session_ptr);
+    void removeSession(Session* session_ptr);
 
 private:
     std::list<boost::shared_ptr<Session>>   _sessions;

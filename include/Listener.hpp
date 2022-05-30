@@ -19,10 +19,16 @@ class Listener
     std::function<void(const boost::system::error_code& ec,
                        boost::shared_ptr<Session> session_ptr)>
     acceptFunPtr;
+    typedef
+    std::function<void(const boost::system::error_code& ec,
+                       std::size_t bytes_transfered,
+                       Session* session_ptr)>
+    readFunPtr;
 
 public:
     Listener(boost::asio::io_context& io_context,
-             acceptFunPtr func);
+             acceptFunPtr accept_func,
+             readFunPtr read_func);
     ~Listener();
 
 private:
@@ -32,6 +38,7 @@ private:
     boost::asio::io_context&        _io_context;
     boost::asio::ip::tcp::acceptor  _acceptor;
     acceptFunPtr                    _onAccept;
+    readFunPtr                      _onRead;
 };
 
 #endif // LISTENER_HPP

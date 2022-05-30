@@ -20,6 +20,8 @@ public:
 private:
     void onAccept(const boost::system::error_code& ec,
                   boost::shared_ptr<Session> session_ptr);
+    void onRead(const boost::system::error_code& ec,
+                std::size_t bytes_received, Session* session);
 
 private:
     boost::asio::io_context&    _io_contex;

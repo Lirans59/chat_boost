@@ -14,14 +14,21 @@ class SessionManager;
 
 class Session : public boost::enable_shared_from_this<Session>
 {
+    friend class Server;
+    typedef
+    std::function<void(const boost::system::error_code& ec,
+                       std::size_t bytes_transfered,
+                       Session* session_ptr)>
+    readFunPtr;
+
 public:
     Session(boost::asio::ip::tcp::socket& socket,
-            SessionManager& session_manager);
+            readFunPtr onRead);
     Session(boost::asio::io_context& io_contex,
-            SessionManager& session_manager);
+            readFunPtr onRead);
     ~Session();
     static boost::shared_ptr<Session> create(boost::asio::io_context& io_contex,
-                            SessionManager& session_manager);
+                            readFunPtr onRead);
     void write();
     void read();
     boost::asio::ip::tcp::socket& getSocket();
@@ -35,7 +42,7 @@ private:
     boost::asio::ip::tcp::socket    _socket;
     boost::asio::streambuf          _buffer;
     std::string                     _message;
-    SessionManager&                 _session_manager;
+    readFunPtr                      _onRead;
 };
 
 #endif // SESSION_HPP

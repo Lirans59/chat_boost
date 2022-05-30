@@ -12,11 +12,11 @@ void SessionManager::addSession(boost::shared_ptr<Session> session_ptr)
     _sessions.insert(_sessions.end(), session_ptr);
 }
 
-void SessionManager::removeSession(boost::shared_ptr<Session> session_ptr)
+void SessionManager::removeSession(Session* session_ptr)
 {
     for(auto it = _sessions.begin(); it != _sessions.end(); it++)
     {
-        if(session_ptr.get() == it->get())
+        if(session_ptr == it->get())
         {
             std::cout << "Connection erased" << std::endl;
             _sessions.erase(it);
