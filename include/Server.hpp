@@ -18,6 +18,8 @@ public:
     ~Server();
 
 private:
+    void onAccept(const boost::system::error_code& ec,
+                  boost::shared_ptr<Session> session_ptr);
 
 private:
     boost::asio::io_context&    _io_contex;

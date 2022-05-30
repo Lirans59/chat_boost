@@ -4,6 +4,7 @@
 #pragma once
 
 #include <iostream>
+#include <functional>
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include "Session.hpp"
@@ -13,21 +14,24 @@
 
 class Listener
 {
+    friend class Server;
+    typedef
+    std::function<void(const boost::system::error_code& ec,
+                       boost::shared_ptr<Session> session_ptr)>
+    acceptFunPtr;
+
 public:
     Listener(boost::asio::io_context& io_context,
-                       SessionManager& session_manager);
+             acceptFunPtr func);
     ~Listener();
 
 private:
     void doAccept();
-    //maybe pass shared_ptr by reference ??
-    void onAccept(const boost::system::error_code& ec,
-                  boost::shared_ptr<Session> session_ptr);
 
 private:
     boost::asio::io_context&        _io_context;
     boost::asio::ip::tcp::acceptor  _acceptor;
-    SessionManager&                 _session_manager;
+    acceptFunPtr                    _onAccept;
 };
 
 #endif // LISTENER_HPP

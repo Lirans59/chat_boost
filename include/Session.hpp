@@ -16,9 +16,9 @@ class Session : public boost::enable_shared_from_this<Session>
 {
 public:
     Session(boost::asio::ip::tcp::socket& socket,
-            SessionManager& sessin_manager);
+            SessionManager& session_manager);
     Session(boost::asio::io_context& io_contex,
-            SessionManager& sessin_manager);
+            SessionManager& session_manager);
     ~Session();
     static boost::shared_ptr<Session> create(boost::asio::io_context& io_contex,
                             SessionManager& session_manager);
