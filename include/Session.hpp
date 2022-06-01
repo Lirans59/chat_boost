@@ -5,44 +5,37 @@
 
 #include <iostream>
 #include <boost/asio.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/bind.hpp>
-#include "SessionManager.hpp"
 
-class SessionManager;
+#define SESSION_PORT 80
+#define MESSAGE_SIZE 255
 
-class Session : public boost::enable_shared_from_this<Session>
+class Session // : Paeser
 {
-    friend class Server;
-    typedef
-    std::function<void(const boost::system::error_code& ec,
-                       std::size_t bytes_transfered,
-                       Session* session_ptr)>
-    readFunPtr;
-
+public: typedef boost::shared_ptr<Session> session_ptr;
 public:
-    Session(boost::asio::ip::tcp::socket& socket,
-            readFunPtr onRead);
-    Session(boost::asio::io_context& io_contex,
-            readFunPtr onRead);
+    Session(boost::asio::io_context& io_context,
+            unsigned int id);
     ~Session();
-    static boost::shared_ptr<Session> create(boost::asio::io_context& io_contex,
-                            readFunPtr onRead);
-    void write();
-    void read();
-    boost::asio::ip::tcp::socket& getSocket();
+
+    void send();
+    void recv();
+    boost::asio::ip::tcp::socket& socket();
+
+    static session_ptr create(boost::asio::io_context& io_context,
+                              unsigned int id);
 
 private:
-    void onWrite(const boost::system::error_code& ec);
-    void onRead(const boost::system::error_code& ec,
-                std::size_t bytes_received);
+    void onRecv(const boost::system::error_code& ec,
+                std::size_t bytes_transfered);
+    void onSend(const boost::system::error_code& ec);
+    void onRecv();
 
 private:
+    boost::asio::io_context&        _io_context;
     boost::asio::ip::tcp::socket    _socket;
-    boost::asio::streambuf          _buffer;
     std::string                     _message;
-    readFunPtr                      _onRead;
+    unsigned int                    _session_id;
 };
 
 #endif // SESSION_HPP

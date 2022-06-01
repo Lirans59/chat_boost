@@ -4,9 +4,10 @@
 #pragma once
 
 #include <iostream>
+#include <unordered_map>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include "Listener.hpp"
+#include <boost/unordered_map.hpp>
 #include "Session.hpp"
 
 #define PORT 8085
@@ -18,15 +19,15 @@ public:
     ~Server();
 
 private:
+    void doAccept();
     void onAccept(const boost::system::error_code& ec,
-                  boost::shared_ptr<Session> session_ptr);
-    void onRead(const boost::system::error_code& ec,
-                std::size_t bytes_received, Session* session);
+                  Session::session_ptr session);
 
 private:
-    boost::asio::io_context&    _io_contex;
-    Listener                    _listener;
-    SessionManager              _session_manager;
+    boost::asio::io_context&                        _io_contex;
+    boost::asio::ip::tcp::acceptor                  _acceptor;
+    boost::unordered_map<int, Session::session_ptr> _sessions;
+    unsigned int                                    _session_count;
 };
 
 #endif // SERVER_HPP

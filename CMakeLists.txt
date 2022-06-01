@@ -9,9 +9,7 @@ set(CMAKE_CXX_FLAGS_DEBUG  "-g")
 set(SOURCES
     main.cpp
     src/Server.cpp
-    src/Listener.cpp
     src/Session.cpp
-    src/SessionManager.cpp
     src/Message.cpp)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)

@@ -2,44 +2,42 @@
 
 Server::Server(boost::asio::io_context& io_context)
 :   _io_contex(io_context),
-    _listener(io_context,
-               std::bind(&Server::onAccept, this, // onAccept
-                         std::placeholders::_1,
-                         std::placeholders::_2),
-               std::bind(&Server::onRead, this,   // onRead
-                         std::placeholders::_1,
-                         std::placeholders::_2,
-                         std::placeholders::_3))
+    _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT)),
+    _session_count(0)
 {
     std::cout << "Server Ctor" << std::endl;
+    doAccept();
+}
+Server::~Server(){}
+
+void Server::doAccept()
+{
+    auto new_session = Session::create(_io_contex, _session_count);
+    _acceptor.async_accept(new_session->socket(),
+        boost::bind(&Server::onAccept, this,
+                    boost::asio::placeholders::error,
+                    new_session));
 }
 
 void Server::onAccept(const boost::system::error_code& ec,
-                      boost::shared_ptr<Session> session_ptr)
+                      Session::session_ptr session)
 {
     if(!ec)
     {
         std::cout << "New connection" << std::endl;
-        _session_manager.addSession(session_ptr);
-        session_ptr->write();
-        session_ptr->read();
-    }
-    _listener.doAccept();
-}
+        boost::asio::ip::tcp::endpoint remote_ep = session->socket().remote_endpoint();
+        std::cout << "address:" << remote_ep.address() << std::endl <<
+        "port:" << remote_ep.port() << std::endl;
 
-void Server::onRead(const boost::system::error_code& ec,
-                std::size_t bytes_received, Session* session)
-{
-    if(!ec)
-    {
-        std::cout << bytes_received << "bytes received" << std::endl;
+        _sessions.emplace(_session_count, session);
+        _session_count++;
+
+        session->send();
+        session->recv();
     }
     else
     {
-        std::cout << "Connection closed" << std::endl;
-        _session_manager.removeSession(session);
+        std::cout << "ERROR - accept" << std::endl;
     }
-    // session->read();
+    doAccept();
 }
-
-Server::~Server(){}
