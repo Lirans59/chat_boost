@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/unordered_map.hpp>
+#include <boost/container/map.hpp>
 #include "Session.hpp"
 
 #define PORT 8085
@@ -22,11 +22,12 @@ private:
     void doAccept();
     void onAccept(const boost::system::error_code& ec,
                   Session::session_ptr session);
+    void removeSession(unsigned int id);
 
 private:
     boost::asio::io_context&                        _io_contex;
     boost::asio::ip::tcp::acceptor                  _acceptor;
-    boost::unordered_map<int, Session::session_ptr> _sessions;
+    boost::container::map<int, Session::session_ptr>_sessions;
     unsigned int                                    _session_count;
 };
 

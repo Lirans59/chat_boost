@@ -12,7 +12,9 @@ Server::~Server(){}
 
 void Server::doAccept()
 {
-    auto new_session = Session::create(_io_contex, _session_count);
+    auto new_session = Session::create(_io_contex, _session_count,
+                                       boost::bind(&Server::removeSession, this,
+                                                boost::placeholders::_1));
     _acceptor.async_accept(new_session->socket(),
         boost::bind(&Server::onAccept, this,
                     boost::asio::placeholders::error,
@@ -40,4 +42,9 @@ void Server::onAccept(const boost::system::error_code& ec,
         std::cout << "ERROR - accept" << std::endl;
     }
     doAccept();
+}
+
+void Server::removeSession(unsigned int id)
+{
+    _sessions.erase(id);
 }

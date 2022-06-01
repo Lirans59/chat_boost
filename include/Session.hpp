@@ -4,6 +4,7 @@
 #pragma once
 
 #include <iostream>
+#include <functional>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 
@@ -12,10 +13,12 @@
 
 class Session // : Paeser
 {
-public: typedef boost::shared_ptr<Session> session_ptr;
 public:
-    Session(boost::asio::io_context& io_context,
-            unsigned int id);
+    typedef boost::shared_ptr<Session> session_ptr;
+    typedef std::function<void(unsigned int)> remove_ptr;
+public:
+    Session(boost::asio::io_context& io_context, unsigned int id,
+            remove_ptr ptr);
     ~Session();
 
     void send();
@@ -23,7 +26,7 @@ public:
     boost::asio::ip::tcp::socket& socket();
 
     static session_ptr create(boost::asio::io_context& io_context,
-                              unsigned int id);
+                              unsigned int id, remove_ptr ptr);
 
 private:
     void onRecv(const boost::system::error_code& ec,
@@ -36,6 +39,7 @@ private:
     boost::asio::ip::tcp::socket    _socket;
     std::string                     _message;
     unsigned int                    _session_id;
+    remove_ptr                      _removeSession;
 };
 
 #endif // SESSION_HPP

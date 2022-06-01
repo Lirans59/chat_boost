@@ -1,11 +1,12 @@
 #include "Session.hpp"
 
-Session::Session::Session(boost::asio::io_context& io_context,
-                          unsigned int id)
+Session::Session::Session(boost::asio::io_context& io_context, unsigned int id,
+                          Session::remove_ptr ptr)
 :   _io_context(io_context),
     _socket(io_context),
     _message("Hello from server\n"),
-    _session_id(id)
+    _session_id(id),
+    _removeSession(ptr)
 {
 }
 Session::~Session(){}
@@ -16,9 +17,9 @@ boost::asio::ip::tcp::socket& Session::socket()
 }
 
 Session::session_ptr Session::create(boost::asio::io_context& io_context,
-                                     unsigned int id)
+                                     unsigned int id, remove_ptr ptr)
 {
-    return boost::shared_ptr<Session>(new Session(io_context, id));
+    return boost::shared_ptr<Session>(new Session(io_context, id, ptr));
 }
 
 void Session::send()
@@ -60,5 +61,6 @@ void Session::onRecv(const boost::system::error_code& ec,
     else
     {
         std::cout << "Connection closed" << std::endl;
+        _removeSession(_session_id);
     }
 }
