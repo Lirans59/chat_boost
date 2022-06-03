@@ -6,10 +6,8 @@ Session::Session::Session(boost::asio::io_context& io_context, std::size_t id,
     _socket(io_context),
     _message("Hello from server\n"),
     _session_id(id),
-    _removeSession(ptr),
-    _Tx(this)
+    _removeSession(ptr)
 {
-    printf("Session Ctor\n");
 }
 Session::~Session(){}
 
@@ -21,16 +19,15 @@ boost::asio::ip::tcp::socket& Session::socket()
 Session::session_ptr Session::create(boost::asio::io_context& io_context,
                                      std::size_t id, remove_ptr ptr)
 {
-    printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa\n");
     return boost::shared_ptr<Session>(new Session(io_context, id, ptr));
 }
 
 void Session::send()
 {
-    // boost::asio::async_write(_socket, 
-    //                 boost::asio::buffer(_message, _message.size()),
-    //                 boost::bind(&Session::onSend, this,
-    //                             boost::asio::placeholders::error));
+    boost::asio::async_write(_socket, 
+                    boost::asio::buffer(_message, _message.size()),
+                    boost::bind(&Session::onSend, this,
+                                boost::asio::placeholders::error));
 }
 
 void Session::onSend(const boost::system::error_code& ec)
@@ -47,7 +44,6 @@ void Session::onSend(const boost::system::error_code& ec)
 
 void Session::recv()
 {
-    std::cout << "Reading.." << std::endl;
     _socket.async_receive(boost::asio::buffer(_message, MESSAGE_SIZE), 0,//read header
                           boost::bind(&Session::onRecv, this,
                           boost::asio::placeholders::error,

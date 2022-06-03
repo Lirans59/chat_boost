@@ -10,9 +10,7 @@ set(SOURCES
     main.cpp
     src/Server.cpp
     src/Session.cpp
-    src/Message.cpp
-    src/Receiver.cpp
-    src/Transmitter.cpp)
+    src/Message.cpp)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 

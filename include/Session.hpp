@@ -8,15 +8,11 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include "Message.hpp"
-#include "Receiver.hpp"
-#include "Transmitter.hpp"
 
 #define MESSAGE_SIZE 255
 
 class Session
 {
-    friend class Receiver;
-    friend class Transmitter;
 public:
     typedef boost::shared_ptr<Session> session_ptr;
     typedef std::function<void(std::size_t)> remove_ptr;
@@ -44,7 +40,6 @@ private:
     std::string                     _message;
     std::size_t                     _session_id;
     remove_ptr                      _removeSession;
-    Transmitter                     _Tx;
 };
 
 #endif // SESSION_HPP
