@@ -22,13 +22,13 @@ private:
     void doAccept();
     void onAccept(const boost::system::error_code& ec,
                   Session::session_ptr session);
-    void removeSession(unsigned int id);
+    void removeSession(std::size_t id);
 
 private:
     boost::asio::io_context&                        _io_contex;
     boost::asio::ip::tcp::acceptor                  _acceptor;
     boost::container::map<int, Session::session_ptr>_sessions;
-    unsigned int                                    _session_count;
+    std::size_t                                    _session_count;
 };
 
 #endif // SERVER_HPP

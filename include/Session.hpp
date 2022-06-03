@@ -7,17 +7,21 @@
 #include <functional>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include "Message.hpp"
+#include "Receiver.hpp"
+#include "Transmitter.hpp"
 
-#define SESSION_PORT 80
 #define MESSAGE_SIZE 255
 
-class Session // : Paeser
+class Session
 {
+    friend class Receiver;
+    friend class Transmitter;
 public:
     typedef boost::shared_ptr<Session> session_ptr;
-    typedef std::function<void(unsigned int)> remove_ptr;
+    typedef std::function<void(std::size_t)> remove_ptr;
 public:
-    Session(boost::asio::io_context& io_context, unsigned int id,
+    Session(boost::asio::io_context& io_context, std::size_t id,
             remove_ptr ptr);
     ~Session();
 
@@ -26,20 +30,21 @@ public:
     boost::asio::ip::tcp::socket& socket();
 
     static session_ptr create(boost::asio::io_context& io_context,
-                              unsigned int id, remove_ptr ptr);
+                              std::size_t id, remove_ptr ptr);
 
 private:
     void onRecv(const boost::system::error_code& ec,
                 std::size_t bytes_transfered);
     void onSend(const boost::system::error_code& ec);
-    void onRecv();
 
+    Message                         _chatMassage;
 private:
     boost::asio::io_context&        _io_context;
     boost::asio::ip::tcp::socket    _socket;
     std::string                     _message;
-    unsigned int                    _session_id;
+    std::size_t                     _session_id;
     remove_ptr                      _removeSession;
+    Transmitter                     _Tx;
 };
 
 #endif // SESSION_HPP

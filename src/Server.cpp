@@ -44,7 +44,7 @@ void Server::onAccept(const boost::system::error_code& ec,
     doAccept();
 }
 
-void Server::removeSession(unsigned int id)
+void Server::removeSession(std::size_t id)
 {
     _sessions.erase(id);
 }
