@@ -25,7 +25,7 @@ private:
                   Session::session_ptr session);
     void doRemoveSession(std::size_t id);
     void doBroadCast(std::size_t id);
-    void onSend(const boost::system::error_code& ec);
+    void onSend(const boost::system::error_code& ec, std::size_t id);
 
 private:
     boost::asio::io_context&                        _io_contex;

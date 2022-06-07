@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <functional>
+#include <queue>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include "Message.hpp"
@@ -42,8 +43,9 @@ private:
     boost::asio::ip::tcp::socket    _socket;
     std::string                     _message;
     boost::asio::streambuf          _buf;
+    std::queue<std::string>         _message_q;
     std::size_t                     _session_id;
-    //function pointers
+    //callbacks
     remove_func                     _removeSession;
     broad_cast_func                 _broad_cast;
 };

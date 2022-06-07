@@ -37,7 +37,7 @@ void Session::onSend(const boost::system::error_code& ec)
 {
     if(!ec)
     {
-        std::cout << "message sent" << std::endl;
+        
     }
     else
     {
@@ -47,11 +47,6 @@ void Session::onSend(const boost::system::error_code& ec)
 
 void Session::recv()
 {
-    // _socket.async_receive(boost::asio::buffer(_message, MESSAGE_SIZE), 0,
-    //                       boost::bind(&Session::onRecv, this,
-    //                       boost::asio::placeholders::error,
-                        //   boost::asio::placeholders::bytes_transferred));
-    
     boost::asio::async_read_until(_socket, _buf, '\n',
                         boost::bind(&Session::onRecv, this,
                         boost::asio::placeholders::error,
@@ -62,13 +57,11 @@ void Session::onRecv(const boost::system::error_code& ec,
 {
     if(!ec)
     {
-        std::cout << bytes_received << "read successfully" << std::endl;
-        _message.clear();
-        _message.assign((std::istreambuf_iterator<char>(&_buf)),
+        //push message to message queue and post
+        std::string s((std::istreambuf_iterator<char>(&_buf)),
                          std::istreambuf_iterator<char>());
-        std::cout << "message = " << _message << std::endl;
-        _buf.consume(_buf.size());
-        _broad_cast(_session_id);
+        _message_q.push(std::move(s));
+        boost::asio::post(_io_context, boost::bind(_broad_cast, _session_id));
         recv();
     }
     else

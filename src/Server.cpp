@@ -51,23 +51,21 @@ void Server::doRemoveSession(std::size_t id)
 
 void Server::doBroadCast(std::size_t id)
 {
-    std::cout << "broadcasting.." << std::endl;
-    std::cout << "_session_pool size = " << _session_pool.size() << std::endl;
     for(auto it : _session_pool)
     {
         if(it.first != id){
             boost::asio::async_write(it.second->socket(),
-                boost::asio::buffer(_session_pool[id]->_message, _session_pool[id]->_message.size()),
+                boost::asio::buffer(_session_pool[id]->_message_q.back(), _session_pool[id]->_message_q.back().size()),
                 boost::bind(&Server::onSend, this,
-                boost::asio::placeholders::error));
-            
+                boost::asio::placeholders::error, id)); 
         }
     }
 }
-void Server::onSend(const boost::system::error_code& ec)
+void Server::onSend(const boost::system::error_code& ec, std::size_t id)
 {
     if(!ec)
     {
+        _session_pool[id]->_message_q.pop();
     }
 }
 
