@@ -14,7 +14,6 @@
 class Message
 {
     friend class boost::serialization::access;
-    friend class Transmitter;
 public:
     enum{ HEADER_SIZE = 2 };
     enum{ BODY_MAX_SIZE = 255 };
