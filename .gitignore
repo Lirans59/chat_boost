@@ -1,2 +1,4 @@
-.vscode/
-build/
+server/.vscode/
+client/.vscode/
+server/build/
+client/build/
