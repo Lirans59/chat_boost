@@ -15,13 +15,10 @@ set(SOURCES
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 find_package(Threads REQUIRED)
-find_package(Boost REQUIRED serialization)
 
 # Target
 add_executable(app ${SOURCES})
 target_compile_features(app PRIVATE cxx_std_20)
-include_directories(${INCLUDE_DIR})
+include_directories(${INCLUDE_DIR} ${Boost_INCLUDE_DIR})
 target_link_libraries(app
-    PRIVATE Threads::Threads
-    PRIVATE Boost::serialization)
-    # PRIVATE ${Boost_INCLUDE_DIR}
+    PRIVATE Threads::Threads)
