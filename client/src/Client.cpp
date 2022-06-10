@@ -2,7 +2,8 @@
 
 Client::Client(boost::asio::io_context& io_context)
 :   _io_context(io_context),
-    _socket(io_context)
+    _socket(io_context),
+    _internal_flag(0)
 {
     doConnect();
 }
@@ -25,7 +26,7 @@ void Client::onRecv(const boost::system::error_code& ec, std::size_t bytes_trans
     }
     else
     {
-        std::cout << "Server closed" << std::endl;
+        std::cout << "Connection closed" << std::endl;
         exit(1);
     }
 }
@@ -70,6 +71,19 @@ void Client::getInput()
 {
     while(true)
     {
+        switch(_internal_flag)
+        {
+            case 0:
+                std::cout << "Username: ";
+                _internal_flag++;
+                break;
+            case 1:
+                std::cout << "Password: ";
+                _internal_flag++;
+                break;
+            default:
+                break;
+        }
         std::string input;
         std::getline(std::cin, input);
         input.append("\n");
