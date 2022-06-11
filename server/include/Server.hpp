@@ -16,6 +16,9 @@ class Server
 {
 public:
     static Server& get(boost::asio::io_context& io_context);
+    Server(const Server&) = delete;
+    const Server operator=(const Server&) = delete;
+
     ~Server();
 
 private:
