@@ -1,5 +1,12 @@
 #include "Server.hpp"
 
+
+Server& Server::get(boost::asio::io_context& io_context)
+{
+    static Server instance(io_context);
+    return instance;
+}
+
 Server::Server(boost::asio::io_context& io_context)
 :   _io_contex(io_context),
     _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT)),

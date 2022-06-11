@@ -15,10 +15,11 @@
 class Server
 {
 public:
-    Server(boost::asio::io_context& io_context);
+    static Server& get(boost::asio::io_context& io_context);
     ~Server();
 
 private:
+    Server(boost::asio::io_context& io_context);
     void doAccept();
     // onAccept add session to session pool
     void onAccept(const boost::system::error_code& ec,
