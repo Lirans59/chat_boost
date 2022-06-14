@@ -33,6 +33,7 @@ private:
     boost::asio::ip::tcp::socket    _socket;
     std::queue<std::string>             _message_q; //change to q of Message instead of string
     boost::asio::streambuf          _buf;
+    std::uint8_t                    _internal_flag;
 };
 
 #endif // CLIENT_HPP
