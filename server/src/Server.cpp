@@ -10,7 +10,8 @@ Server& Server::get(boost::asio::io_context& io_context)
 Server::Server(boost::asio::io_context& io_context)
 :   _io_contex(io_context),
     _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT)),
-    _session_count(0)
+    _session_count(0),
+    _db("users.txt")
 {
     doAccept();
 }
@@ -22,6 +23,8 @@ void Server::doAccept()
                                        boost::bind(&Server::doRemoveSession, this,
                                                 boost::placeholders::_1),
                                        boost::bind(&Server::doBroadCast, this,
+                                                boost::placeholders::_1),
+                                       boost::bind(&Server::doAuthentication, this,
                                                 boost::placeholders::_1));
     _acceptor.async_accept(new_session->socket(),
         boost::bind(&Server::onAccept, this,
@@ -37,12 +40,11 @@ void Server::onAccept(const boost::system::error_code& ec,
         std::cout << "New connection" << std::endl;
         boost::asio::ip::tcp::endpoint remote_ep = session->socket().remote_endpoint();
         std::cout << remote_ep.address() << " : " << remote_ep.port() << std::endl;
-
+        
         _session_pool.emplace(_session_count, session);
         _session_count++;
-
-        session->send();
-        session->recv();
+        session->send(std::string("yes this is dog"));
+        session->authenticate();
     }
     else
     {
@@ -66,7 +68,7 @@ void Server::doBroadCast(std::size_t id)
             boost::asio::async_write(it.second->socket(),
                 boost::asio::buffer(temp, temp.size()),
                 boost::bind(&Server::onSend, this,
-                boost::asio::placeholders::error, id)); 
+                boost::asio::placeholders::error, id));
         }
     }
 }
@@ -77,3 +79,17 @@ void Server::onSend(const boost::system::error_code& ec, std::size_t id)
     }
 }
 
+void Server::doAuthentication(Session *session)
+{
+    if(_db.valid(session->_username, session->_password))
+    {
+        session->send(std::string("\nWelcome ") + session->_username + "!\n");
+        session->recv();
+    }
+    else
+    {
+        session->send(std::string("Wrong username/password"));
+        doRemoveSession(session->_session_id);
+    }
+    session->_password.clear();
+}

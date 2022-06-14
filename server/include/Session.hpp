@@ -19,23 +19,30 @@ public:
     typedef boost::shared_ptr<Session> session_ptr;
     typedef std::function<void(std::size_t)> remove_func;
     typedef std::function<void(std::size_t)> broad_cast_func;
+    typedef std::function<void(Session*)> auth_func;
 public:
     Session(boost::asio::io_context& io_context, std::size_t id,
-            remove_func remove_func, broad_cast_func broad_cast_func);
+            remove_func remove_func, broad_cast_func broad_cast_func,
+            auth_func auth_func);
     ~Session();
 
-    void send();
+    void send(std::string&& msg);
     void recv();
+    void authenticate();
     boost::asio::ip::tcp::socket& socket();
-
     static session_ptr create(boost::asio::io_context& io_context,
                               std::size_t id, remove_func remove_func,
-                              broad_cast_func broad_cast_func);
+                              broad_cast_func broad_cast_func,
+                              auth_func auth_func);
 
 private:
     void onRecv(const boost::system::error_code& ec,
                 std::size_t bytes_transfered);
     void onSend(const boost::system::error_code& ec);
+    void onUsername(const boost::system::error_code& ec,
+                std::size_t bytes_transfered);
+    void onPassword(const boost::system::error_code& ec,
+    std::size_t bytes_transfered);
 
     Message                         _chatMassage;
 private:
@@ -45,9 +52,12 @@ private:
     boost::asio::streambuf          _buf;
     std::queue<std::string>         _message_q;
     std::size_t                     _session_id;
+    std::string                     _username;
+    std::string                     _password;
     //callbacks
     remove_func                     _removeSession;
     broad_cast_func                 _broad_cast;
+    auth_func                       _auth;
 };
 
 #endif // SESSION_HPP

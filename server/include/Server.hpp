@@ -9,6 +9,7 @@
 #include <boost/bind.hpp>
 #include <boost/container/map.hpp>
 #include "Session.hpp"
+#include "UserDB.hpp"
 
 #define PORT 8085
 
@@ -30,12 +31,14 @@ private:
     void doRemoveSession(std::size_t id);
     void doBroadCast(std::size_t id);
     void onSend(const boost::system::error_code& ec, std::size_t id);
+    void doAuthentication(Session *session);
 
 private:
     boost::asio::io_context&                        _io_contex;
     boost::asio::ip::tcp::acceptor                  _acceptor;
     boost::container::map<int, Session::session_ptr>_session_pool;
     std::size_t                                     _session_count;
+    UserDB                                          _db;
 };
 
 #endif // SERVER_HPP
