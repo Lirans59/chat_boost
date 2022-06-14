@@ -39,6 +39,7 @@ private:
     boost::container::map<int, Session::session_ptr>_session_pool;
     std::size_t                                     _session_count;
     UserDB                                          _db;
+    callbacks_t                                     _callbacks;
 };
 
 #endif // SERVER_HPP

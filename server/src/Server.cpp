@@ -13,19 +13,16 @@ Server::Server(boost::asio::io_context& io_context)
     _session_count(0),
     _db("users.txt")
 {
+    _callbacks.remove_func = boost::bind(&Server::doRemoveSession, this, boost::placeholders::_1);
+    _callbacks.broad_cast_func = boost::bind(&Server::doBroadCast, this, boost::placeholders::_1);
+    _callbacks.auth_func = boost::bind(&Server::doAuthentication, this, boost::placeholders::_1);
     doAccept();
 }
 Server::~Server(){}
 
 void Server::doAccept()
 {
-    auto new_session = Session::create(_io_contex, _session_count,
-                                       boost::bind(&Server::doRemoveSession, this,
-                                                boost::placeholders::_1),
-                                       boost::bind(&Server::doBroadCast, this,
-                                                boost::placeholders::_1),
-                                       boost::bind(&Server::doAuthentication, this,
-                                                boost::placeholders::_1));
+    auto new_session = Session::create(_io_contex, _session_count, _callbacks);
     _acceptor.async_accept(new_session->socket(),
         boost::bind(&Server::onAccept, this,
                     boost::asio::placeholders::error,
