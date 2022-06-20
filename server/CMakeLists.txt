@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(
-    chat
+    chat_server
     VERSION 1.0
     LANGUAGES CXX
 )
@@ -13,13 +13,13 @@ set(SOURCES
     src/Message.cpp
     src/UserDB.cpp)
 
-set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_package(Threads REQUIRED)
 
 # Target
-add_executable(app ${SOURCES})
-target_compile_features(app PRIVATE cxx_std_20)
+add_executable(server ${SOURCES})
+target_compile_features(server PRIVATE cxx_std_20)
 include_directories(${INCLUDE_DIR} ${Boost_INCLUDE_DIR})
-target_link_libraries(app
+target_link_libraries(server
     PRIVATE Threads::Threads)

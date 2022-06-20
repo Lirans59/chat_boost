@@ -10,15 +10,15 @@ set(SOURCES
     main.cpp
     src/Client.cpp
     src/Message.cpp)
-set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_package(Threads REQUIRED)
 find_package(Boost REQUIRED serialization)
 
 # Target
-add_executable(app ${SOURCES})
-target_compile_features(app PRIVATE cxx_std_20)
+add_executable(client ${SOURCES})
+target_compile_features(client PRIVATE cxx_std_20)
 include_directories(${INCLUDE_DIR})
-target_link_libraries(app
+target_link_libraries(client
     PRIVATE Threads::Threads
     PRIVATE Boost::serialization)
