@@ -4,7 +4,7 @@ Server::Server(boost::asio::io_context& io_context)
 :   _io_contex(io_context),
     _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT)),
     _session_count(0),
-    _db("users.txt")
+    _db_users("users.txt")
 {
     doAccept();
 }
@@ -74,7 +74,7 @@ void Server::onSend(const boost::system::error_code& ec, std::size_t id)
 
 void Server::doAuthentication(Session *session)
 {
-    if(_db.valid(session->_username, session->_password))
+    if(_db_users.valid(session->_username, session->_password))
     {
         session->send(std::string("\nWelcome ") + session->_username + "!\n");
         session->recv();

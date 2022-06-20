@@ -9,7 +9,7 @@
 #include <boost/bind.hpp>
 #include <boost/container/map.hpp>
 #include "Session.hpp"
-#include "UserDB.hpp"
+#include "Database.hpp"
 
 #define PORT 8085
 
@@ -34,7 +34,7 @@ private:
     boost::asio::ip::tcp::acceptor                  _acceptor;
     boost::container::map<int, Session::session_ptr>_session_pool;
     std::size_t                                     _session_count;
-    UserDB                                          _db;
+    Database                                        _db_users;
 };
 
 #endif // SERVER_HPP
