@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(
-    chat
+    chat_server
     VERSION 1.0
     LANGUAGES CXX
 )
 set(CMAKE_CXX_FLAGS_DEBUG  "-g")
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/thirdparty/SQLiteCpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SQLiteCpp)
 
 set(SOURCES
     main.cpp
@@ -15,15 +15,15 @@ set(SOURCES
     src/Message.cpp
     src/Database.cpp)
 
-set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_package(Threads REQUIRED)
 
 # Target
-add_executable(app ${SOURCES})
-target_compile_features(app PRIVATE cxx_std_20)
+add_executable(server ${SOURCES})
+target_compile_features(server PRIVATE cxx_std_20)
 include_directories(${INCLUDE_DIR} ${Boost_INCLUDE_DIR} thirdparty/SQLiteCpp/include)
-target_link_libraries(app
+target_link_libraries(server
     SQLiteCpp
     sqlite3
     pthread

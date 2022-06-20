@@ -12,6 +12,15 @@
 
 #define MESSAGE_SIZE 512
 
+class Session;
+typedef struct callback
+{
+    std::function<void(std::size_t)> remove_func;
+    std::function<void(std::size_t)> broad_cast_func;
+    std::function<void(Session*)> auth_func;    
+}callbacks_t;
+
+
 class Session
 {
     friend class Server;
@@ -22,8 +31,7 @@ public:
     typedef std::function<void(Session*)> auth_func;
 public:
     Session(boost::asio::io_context& io_context, std::size_t id,
-            remove_func remove_func, broad_cast_func broad_cast_func,
-            auth_func auth_func);
+            callbacks_t callbacks);
     ~Session();
 
     void send(std::string&& msg);
@@ -31,9 +39,7 @@ public:
     void authenticate();
     boost::asio::ip::tcp::socket& socket();
     static session_ptr create(boost::asio::io_context& io_context,
-                              std::size_t id, remove_func remove_func,
-                              broad_cast_func broad_cast_func,
-                              auth_func auth_func);
+                              std::size_t id, callbacks_t callbacks);
 
 private:
     void onRecv(const boost::system::error_code& ec,
@@ -54,10 +60,7 @@ private:
     std::size_t                     _session_id;
     std::string                     _username;
     std::string                     _password;
-    //callbacks
-    remove_func                     _removeSession;
-    broad_cast_func                 _broad_cast;
-    auth_func                       _auth;
+    callbacks_t                     _callbacks;
 };
 
 #endif // SESSION_HPP

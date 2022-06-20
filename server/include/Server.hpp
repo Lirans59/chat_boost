@@ -16,10 +16,14 @@
 class Server
 {
 public:
-    Server(boost::asio::io_context& io_context);
+    static Server& get(boost::asio::io_context& io_context);
+    Server(const Server&) = delete;
+    const Server operator=(const Server&) = delete;
+
     ~Server();
 
 private:
+    Server(boost::asio::io_context& io_context);
     void doAccept();
     // onAccept add session to session pool
     void onAccept(const boost::system::error_code& ec,
@@ -35,6 +39,7 @@ private:
     boost::container::map<int, Session::session_ptr>_session_pool;
     std::size_t                                     _session_count;
     Database                                        _db_users;
+    callbacks_t                                     _callbacks;
 };
 
 #endif // SERVER_HPP

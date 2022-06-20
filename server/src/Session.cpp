@@ -1,16 +1,12 @@
 #include "Session.hpp"
 
 Session::Session::Session(boost::asio::io_context& io_context, std::size_t id,
-                          Session::remove_func remove_func,
-                          Session::broad_cast_func broad_cast_func,
-                          auth_func auth_func)
+                          callbacks_t callbacks)
 :   _io_context(io_context),
     _socket(io_context),
     _message("Hello from server\n"),
     _session_id(id),
-    _removeSession(remove_func),
-    _broad_cast(broad_cast_func),
-    _auth(auth_func)
+    _callbacks(callbacks)
 {
 }
 Session::~Session(){}
@@ -21,12 +17,9 @@ boost::asio::ip::tcp::socket& Session::socket()
 }
 
 Session::session_ptr Session::create(boost::asio::io_context& io_context,
-                                     std::size_t id, remove_func remove_func,
-                                     broad_cast_func broad_cast_func,
-                                     auth_func auth_func)
+                                     std::size_t id, callbacks_t callbacks)
 {
-    return boost::shared_ptr<Session>(new Session(io_context, id, remove_func, broad_cast_func,
-        auth_func));
+    return boost::shared_ptr<Session>(new Session(io_context, id, callbacks));
 }
 
 void Session::send(std::string&& msg)
@@ -67,13 +60,13 @@ void Session::onRecv(const boost::system::error_code& ec,
         s.append((std::istreambuf_iterator<char>(&_buf)),
                          std::istreambuf_iterator<char>());
         _message_q.push(std::move(s));
-        boost::asio::post(_io_context, boost::bind(_broad_cast, _session_id));
+        boost::asio::post(_io_context, boost::bind(_callbacks.broad_cast_func, _session_id));
         recv();
     }
     else
     {
         std::cout << "Connection closed - " << ec.message() << std::endl;
-        _removeSession(_session_id);
+        _callbacks.remove_func(_session_id);
     }
 }
 
@@ -108,5 +101,5 @@ void Session::onPassword(const boost::system::error_code& ec,
     _password = std::move(s);
 
     // authenticate
-    _auth(this);
+    _callbacks.auth_func(this);
 }

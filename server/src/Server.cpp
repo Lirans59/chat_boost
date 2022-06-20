@@ -1,24 +1,28 @@
 #include "Server.hpp"
 
+
+Server& Server::get(boost::asio::io_context& io_context)
+{
+    static Server instance(io_context);
+    return instance;
+}
+
 Server::Server(boost::asio::io_context& io_context)
 :   _io_contex(io_context),
     _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT)),
     _session_count(0),
     _db_users("users.txt")
 {
+    _callbacks.remove_func = boost::bind(&Server::doRemoveSession, this, boost::placeholders::_1);
+    _callbacks.broad_cast_func = boost::bind(&Server::doBroadCast, this, boost::placeholders::_1);
+    _callbacks.auth_func = boost::bind(&Server::doAuthentication, this, boost::placeholders::_1);
     doAccept();
 }
 Server::~Server(){}
 
 void Server::doAccept()
 {
-    auto new_session = Session::create(_io_contex, _session_count,
-                                       boost::bind(&Server::doRemoveSession, this,
-                                                boost::placeholders::_1),
-                                       boost::bind(&Server::doBroadCast, this,
-                                                boost::placeholders::_1),
-                                       boost::bind(&Server::doAuthentication, this,
-                                                boost::placeholders::_1));
+    auto new_session = Session::create(_io_contex, _session_count, _callbacks);
     _acceptor.async_accept(new_session->socket(),
         boost::bind(&Server::onAccept, this,
                     boost::asio::placeholders::error,
