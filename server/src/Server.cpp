@@ -79,6 +79,7 @@ void Server::doAuthentication(Session *session)
 {
     if(_db_users.valid(session->_username, session->_password))
     {
+        session->_password.clear();
         session->send(std::string("\nWelcome ") + session->_username + "!\n");
         session->recv();
     }
@@ -87,5 +88,4 @@ void Server::doAuthentication(Session *session)
         session->send(std::string("Wrong username/password"));
         doRemoveSession(session->_session_id);
     }
-    session->_password.clear();
 }

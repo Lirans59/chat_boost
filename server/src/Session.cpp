@@ -85,6 +85,7 @@ void Session::onUsername(const boost::system::error_code& ec,
     // store username
     std::string s((std::istreambuf_iterator<char>(&_buf)),
                          std::istreambuf_iterator<char>());
+    s.pop_back();
     _username = std::move(s);
     // read password
     boost::asio::async_read_until(_socket, _buf, '\n',
@@ -98,6 +99,7 @@ void Session::onPassword(const boost::system::error_code& ec,
     // store password
     std::string s((std::istreambuf_iterator<char>(&_buf)),
                          std::istreambuf_iterator<char>());
+    s.pop_back();
     _password = std::move(s);
 
     // authenticate
