@@ -10,14 +10,14 @@
 class Database
 {
 public:
-    Database(const char *file);
+    Database(const char *path);
     ~Database();
-    void add(std::string& user);
+    void add(std::string& username, std::string& password);
     void remove(std::string& username);
     bool valid(std::string& username, std::string& password);
 
 private:
-    const char*         _file;
+    const char*         _path;
     SQLite::Database    _db;
     // SQLite::Statement   _query;
 };

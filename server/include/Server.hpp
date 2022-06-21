@@ -20,10 +20,10 @@ public:
     Server(const Server&) = delete;
     const Server operator=(const Server&) = delete;
 
-    ~Server();
 
 private:
     Server(boost::asio::io_context& io_context);
+    ~Server();
     void doAccept();
     // onAccept add session to session pool
     void onAccept(const boost::system::error_code& ec,

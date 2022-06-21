@@ -1,17 +1,10 @@
 #include "Server.hpp"
 
-
-Server& Server::get(boost::asio::io_context& io_context)
-{
-    static Server instance(io_context);
-    return instance;
-}
-
 Server::Server(boost::asio::io_context& io_context)
 :   _io_contex(io_context),
     _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT)),
     _session_count(0),
-    _db_users("users.txt")
+    _db_users("users.db3")
 {
     _callbacks.remove_func = boost::bind(&Server::doRemoveSession, this, boost::placeholders::_1);
     _callbacks.broad_cast_func = boost::bind(&Server::doBroadCast, this, boost::placeholders::_1);
@@ -19,6 +12,12 @@ Server::Server(boost::asio::io_context& io_context)
     doAccept();
 }
 Server::~Server(){}
+
+Server& Server::get(boost::asio::io_context& io_context)
+{
+    static Server instance(io_context);
+    return instance;
+}
 
 void Server::doAccept()
 {
