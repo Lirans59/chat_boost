@@ -19,7 +19,6 @@ public:
 private:
     const char*         _path;
     SQLite::Database    _db;
-    std::uint32_t       _count;//use AUTOINCREMENT instead
 };
 
 #endif // DATABASE_HPP
