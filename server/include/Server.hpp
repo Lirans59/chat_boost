@@ -9,7 +9,7 @@
 #include <boost/bind.hpp>
 #include <boost/container/map.hpp>
 #include "Session.hpp"
-#include "UserDB.hpp"
+#include "Database.hpp"
 
 #define PORT 8085
 
@@ -20,10 +20,10 @@ public:
     Server(const Server&) = delete;
     const Server operator=(const Server&) = delete;
 
-    ~Server();
 
 private:
     Server(boost::asio::io_context& io_context);
+    ~Server();
     void doAccept();
     // onAccept add session to session pool
     void onAccept(const boost::system::error_code& ec,
@@ -38,7 +38,7 @@ private:
     boost::asio::ip::tcp::acceptor                  _acceptor;
     boost::container::map<int, Session::session_ptr>_session_pool;
     std::size_t                                     _session_count;
-    UserDB                                          _db;
+    Database                                        _db_users;
     callbacks_t                                     _callbacks;
 };
 
