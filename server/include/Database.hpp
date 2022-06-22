@@ -19,8 +19,6 @@ public:
 private:
     const char*         _path;
     SQLite::Database    _db;
-    SQLite::Statement   _query_login;
-    SQLite::Statement   _query_remove_user;
     std::uint32_t       _count;//use AUTOINCREMENT instead
 };
 
